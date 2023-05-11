@@ -1,0 +1,58 @@
+package com.example.salesmanagement.entity.controllers;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.salesmanagement.entity.models.CartItem;
+import com.example.salesmanagement.entity.services.CartItemService;
+
+@RestController
+@RequestMapping("/api/cartitems")
+public class CartItemController {
+    @Autowired
+    private CartItemService cartItemService;
+
+    @GetMapping("")
+    public ResponseEntity<List<CartItem>> getAllCartItems() {
+        List<CartItem> cartItems = cartItemService.getAllCartItems();
+        return ResponseEntity.ok(cartItems);
+    }
+
+    @GetMapping("/{id}/show")
+    public ResponseEntity<CartItem> getCartItemById(@PathVariable(value = "id") String id) {
+        CartItem cartItem = cartItemService.getCartItemById(id);
+        return ResponseEntity.ok(cartItem);
+    }
+
+    @PostMapping("/{cartId}/store")
+    public  ResponseEntity<CartItem> store(@PathVariable String cartId,@RequestBody CartItem cartItem){
+        cartItem =cartItemService.createCartItem(cartId ,cartItem);
+        if (cartItem != null) {
+            return ResponseEntity.ok(cartItem);
+        } else {
+            return ResponseEntity.notFound().build(); // Or any other appropriate response
+        }
+    }
+
+    @PutMapping("/{id}/update")
+    public void updateCartItem(@PathVariable("id") String id, @RequestBody CartItem cartItem) {
+        cartItemService.updateCartItem(id, cartItem);
+        System.out.println(cartItem);
+    }
+
+    @DeleteMapping("/{id}/delete")
+    public ResponseEntity<Void> deleteCartItem(@PathVariable(value = "id") String id) {
+        cartItemService.deleteCartItem(id);
+        return ResponseEntity.noContent().build();
+    }
+}
