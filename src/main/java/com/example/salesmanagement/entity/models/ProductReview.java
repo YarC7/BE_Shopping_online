@@ -8,8 +8,9 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import com.example.salesmanagement.entity.utilities.Time;
 
 import lombok.Data;
 
@@ -19,17 +20,36 @@ import lombok.Data;
 public class ProductReview {
     @Id
     @Column(name = "product_review_id",length = 50, nullable = false, updatable = false)
-    private String product_review_Id = "PR-" + UUID.randomUUID().toString();
+    private String productReviewId = "PR-" + UUID.randomUUID().toString();
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "product_id", nullable = true)
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product; 
+
+    @ManyToOne
+    @JoinColumn(name = "parentId")
+    private ProductReview parentReview;
+
+    @Column(name = "title", nullable = true)
+    private String title;
 
     @Column(name = "rating")
     private int rating;
 
-    @Column(name = "comment")
-    private String comment;
+    @Column(name = "published", nullable = false)
+    private boolean published;
+
+    @Column(name = "createdAt", nullable = true)
+    private String createdAt = Time.getDeadCurrentDate();
+
+    @Column(name = "updateAt", nullable = true)
+    private String updateAt = Time.getDeadCurrentDate();
+
+    @Column(name = "publishedAt", nullable = true)
+    private String publishedAt = Time.getDeadCurrentDate();;
+
+    @Column(name = "content")
+    private String content;
 
 
 }

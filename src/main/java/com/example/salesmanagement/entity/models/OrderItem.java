@@ -10,12 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import com.example.salesmanagement.entity.utilities.Time;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import lombok.Data;
 
 
@@ -26,7 +22,7 @@ import lombok.Data;
 public class OrderItem {
     @Id
     @Column(name = "order_item_id",length = 50, nullable = false, updatable = false)
-    private String orderItem_Id = "OI-" + UUID.randomUUID().toString();
+    private String orderItemId = "OI-" + UUID.randomUUID().toString();
     
     @JsonIgnore
     @ManyToOne

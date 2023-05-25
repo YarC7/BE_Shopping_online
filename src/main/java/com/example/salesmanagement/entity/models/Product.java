@@ -1,5 +1,7 @@
 package com.example.salesmanagement.entity.models;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import javax.persistence.CascadeType;
@@ -8,6 +10,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -21,7 +25,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "products")
-public class Product {
+public class Product {  
     @Id
     @Column(name = "product_id",length = 50, nullable = false, updatable = false)
     private String productId = "SP-" + UUID.randomUUID().toString();
@@ -87,6 +91,14 @@ public class Product {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    // @ManyToMany
+    // @JoinTable(
+    //     name = "product_tag",
+    //     joinColumns = @JoinColumn(name = "product_id"),
+    //     inverseJoinColumns = @JoinColumn(name = "tag_id" , nullable = true)
+    // )
+    // private List<Tag> tags;
+
     @Column(length = 100, nullable = true)
     private String createAt = Time.getDeadCurrentDate();
 
@@ -108,4 +120,43 @@ public class Product {
             category.getProduct().add(this);
         }
     }
+    // public void setTags() {
+    //     this.tags = new ArrayList<>();
+    
+    //     for (Tag tag : tags) {
+    //         if (tag.getTagId() == null) {
+    //             // Create a new tag if it doesn't have an ID
+    //             Tag newTag = new Tag();
+    //             newTag.setTitle(tag.getTitle());
+    //             newTag.setMetaTitle(tag.getMetaTitle());
+    //             newTag.setSlug(tag.getSlug());
+    //             newTag.setContent(tag.getContent());
+    
+    //             // Set the new tag to the product
+    //             this.tags.add(newTag);
+    //         } else {
+    //             // Add the existing tag to the product
+    //             this.tags.add(tag);
+    //         }
+    //     }
+    // }
+
+
+
+    // public void setTags(List<Tag> tags){
+    //     if (this.tags == null) {
+    //         this.tags = new ArrayList<>(); 
+    //     }
+
+    //     this.product = this;
+    //     List<Tag> tagList = this.getTags();
+    //     for (Tag tagObj : tagList){
+    //         Tag tag = new Tag();
+    //         tag.setTitle(tagObj.getTitle());
+    //         tag.setMetaTitle(tagObj.getMetaTitle());
+    //         tag.setSlug(tagObj.getSlug());
+    //         tag.setContent(tagObj.getContent());
+    //         tags.add(tag);
+    //     }
+    // }
 }

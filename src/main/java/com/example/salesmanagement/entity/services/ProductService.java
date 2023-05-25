@@ -11,6 +11,7 @@ import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
 
+import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,8 @@ import com.example.salesmanagement.entity.repositories.ProductRepository;
 import com.example.salesmanagement.entity.utilities.Time;
 import com.example.salesmanagement.entity.models.Category;
 import com.example.salesmanagement.entity.models.Product;
+// import com.example.salesmanagement.entity.models.ProductTag;
+// import com.example.salesmanagement.entity.models.Tag;
 
 @Service
 public class ProductService {
@@ -71,11 +74,31 @@ public class ProductService {
         Category category = categoryRepository.findById(categoryId).orElse(null);
         if (category != null) {
             product.setCategory(category);
-            return productRepository.save(product);
+
+
+
+        return productRepository.save(product);
         }
         return null; // Or throw an exception if category is not found
     }
 
+    // public ResponseEntity<Product> addProductTag(String id, Product product){
+    //     Optional<Product> optionalProduct = productRepository.findById(id);
+    
+    //     if (!optionalProduct.isPresent()) {
+    //         return ResponseEntity.notFound().build();
+    //     }
+    //     Product existingProduct = optionalProduct.get();
+
+    //     existingProduct.setTags(product.getTags());
+
+
+
+
+    //     Product addProductTag = productRepository.save(existingProduct);
+        
+    //     return ResponseEntity.ok(addProductTag);
+    // }
 
 
     public ResponseEntity<Product> updateProduct(String id, Product product) {

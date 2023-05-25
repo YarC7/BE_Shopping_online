@@ -14,13 +14,12 @@ public class CategoryService {
     private CategoryRepository categoryRepository;
 
     public void createCategory(Category category) {
+        category.setParentCategory(category.getParentCategory());
         categoryRepository.save(category);
     }
     
     public List<Category> getAllCategories(){
         List<Category> categories = categoryRepository.findAll();
-        
-
         return categories;
     }
 
@@ -36,6 +35,7 @@ public class CategoryService {
 
     
 
+    
     public ResponseEntity<Category> updateCategory(String id, Category category) {
         Optional<Category> optionalCategory = categoryRepository.findById(id);
         if (!optionalCategory.isPresent()) {
@@ -43,7 +43,9 @@ public class CategoryService {
         }
         Category existingCategory = optionalCategory.get();   
         existingCategory.setCategoryName(category.getCategoryName());
-        existingCategory.setCategoryDiscount(category.getCategoryDiscount());
+        existingCategory.setMetaTitle(category.getMetaTitle());
+        existingCategory.setSlug(category.getSlug());
+        existingCategory.setContent(category.getContent());
         existingCategory.setUpdateAt(Time.getCurrentDate());
         Category updatedCategory = categoryRepository.save(existingCategory);
         return ResponseEntity.ok(updatedCategory);

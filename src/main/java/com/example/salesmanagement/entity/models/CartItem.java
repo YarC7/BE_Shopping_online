@@ -1,26 +1,18 @@
 package com.example.salesmanagement.entity.models;
 
 import java.math.BigDecimal;
-import java.util.List;
+// import java.util.List;
 import java.util.UUID;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-
 import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import com.example.salesmanagement.entity.utilities.Time;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-
-
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -56,7 +48,6 @@ public class CartItem {
    @Column(name = "is_checked", nullable = false)
    private Boolean isChecked;
    
-
    public BigDecimal getTotalPrice() {
       return product.getProductPrice().multiply(BigDecimal.valueOf(quantity));
    }

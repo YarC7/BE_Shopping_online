@@ -18,11 +18,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import com.example.salesmanagement.entity.enumtypes.OrderStatus;
 import com.example.salesmanagement.entity.utilities.Time;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
 import lombok.Data;
 
 
