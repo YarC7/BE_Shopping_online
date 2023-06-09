@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,8 +42,9 @@ public class ProductController {
         Product product = productService.getProductById(id);
         return ResponseEntity.ok(product);
     }
-
+    
     @PutMapping("/{id}/category/{categoryId}/update")
+    @PreAuthorize("hasRole('ROLE_SELLER')")
     public ResponseEntity<Product> updateProductCategory(
             @PathVariable String id,
             @PathVariable String categoryId
@@ -54,6 +56,7 @@ public class ProductController {
 
 
     @PostMapping("/{categoryId}/store")
+    @PreAuthorize("hasAuthority('ROLE_SELLER')")     
     public  ResponseEntity<Product> store(@PathVariable String categoryId,
     @RequestBody Product product){
 
@@ -68,11 +71,13 @@ public class ProductController {
     }
 
     @PutMapping("/{id}/update")
+    @PreAuthorize("hasAuthority('SELLER')")
     public void updateProduct(@PathVariable("id") String id, @RequestBody Product product) {
         productService.updateProduct(id, product);
         System.out.println(product);
     }
     @DeleteMapping("/{id}/delete")
+    @PreAuthorize("hasAuthority('SELLER')")
     public ResponseEntity<Void> deleteProduct(@PathVariable(value = "id") String id) {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();

@@ -8,25 +8,20 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import com.example.salesmanagement.entity.repositories.AddressRepository;
 import com.example.salesmanagement.entity.repositories.UserRepository;
 import com.example.salesmanagement.entity.utilities.Time;
 import com.example.salesmanagement.entity.models.User;
-import com.example.salesmanagement.entity.models.Address;
+
 
 @Service
-public class UserService {
+public class UserService{
     @Autowired
     private UserRepository userRepository;
     
-    @Autowired
-    private AddressRepository addressRepository;
-
     public List<User> getAllUsers(){
         List<User> users = new ArrayList<>();
         userRepository.findAll().forEach(users::add);
@@ -50,29 +45,15 @@ public class UserService {
     
         User existingUser = optionalUser.get();
     
-        existingUser.setUserEmail(user.getUserEmail());
-        existingUser.setUserName(user.getUserName());
+
+        existingUser.setUserFirstName(user.getUserFirstName());
+        existingUser.setUserLastName(user.getUserLastName());
+        existingUser.setUserPassword(user.getUserPassword());
         existingUser.setUserPhone(user.getUserPhone());
         existingUser.setUserAddress(user.getUserAddress());
         existingUser.setUserNationality(user.getUserNationality());
         existingUser.setUserGender(user.getUserGender());
-
-        // existingUser.setUserShippingAddress(user.getUserShippingAddress());
-        Address updatedAddress = user.getUserShippingAddress();
-    
-            // Check if existing address is null and create a new instance if needed
-            Address existingAddress = existingUser.getUserShippingAddress();
-            if (existingAddress == null) {
-                existingAddress = new Address();
-                existingUser.setUserShippingAddress(existingAddress);
-            }
-    
-            // Update address details
-            existingAddress.setStreetAddress(updatedAddress.getStreetAddress());
-            existingAddress.setCity(updatedAddress.getCity());
-            existingAddress.setState(updatedAddress.getState());
-            existingAddress.setZipCode(updatedAddress.getZipCode());
-        // existingUser.setUserPaymentMethod(user.getUserPaymentMethod());
+        existingUser.setUserRole(user.getUserRole());
         existingUser.setUpdateAt(Time.getCurrentDate());
 
         User updatedUser = userRepository.save(existingUser);
@@ -84,37 +65,14 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public ResponseEntity<User> addUserShippingAddress(String id, User user){
-        Optional<User> optionalUser = userRepository.findById(id);
-    
-        if (!optionalUser.isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
-        User existingUser = optionalUser.get();
-        Address updatedAddress = user.getUserShippingAddress();
-    
-            // Check if existing address is null and create a new instance if needed
-            Address existingAddress = existingUser.getUserShippingAddress();
-            if (existingAddress == null) {
-                existingAddress = new Address();
-                existingUser.setUserShippingAddress(existingAddress);
-            }
-    
-            // Update address details
-            existingAddress.setStreetAddress(updatedAddress.getStreetAddress());
-            existingAddress.setCity(updatedAddress.getCity());
-            existingAddress.setState(updatedAddress.getState());
-            existingAddress.setZipCode(updatedAddress.getZipCode());
-
-        User addedUserShippingAddress = userRepository.save(existingUser);
-        
-        return ResponseEntity.ok(addedUserShippingAddress);
-    }
-
     public String uploadUserImage(String path,String id, MultipartFile file) throws IOException {
 
         // construct file path using User ID as file name
-        String fileName = id + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+        String originalFilename = file.getOriginalFilename();
+        String fileName = null;
+        if (originalFilename != null) {
+            fileName = id + originalFilename.substring(originalFilename.lastIndexOf("."));
+        }
         String filePath = path+ File.separator+fileName;
 
         // create image folder if it doesn't exist
@@ -133,7 +91,11 @@ public class UserService {
     }
     public String updateUserImage(String path, String id, MultipartFile file) throws IOException {
         // construct file path using User ID as file name
-        String fileName = id + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+        String originalFilename = file.getOriginalFilename();
+        String fileName = null;
+        if (originalFilename != null) {
+            fileName = id + originalFilename.substring(originalFilename.lastIndexOf("."));
+        }
         String filePath = path + File.separator + fileName;
     
         // save image file to folder
@@ -157,6 +119,9 @@ public class UserService {
     }
     public byte[] getUserImage(String path, String id) throws IOException {
         String fileName = id + ".png"; // assuming all User images are PNG files
+        if (fileName != id + ".png") {
+            fileName =id + ".jpg"; // if not .png here , change to jpg
+        }
         String filePath = path + File.separator + fileName;
         File imageFile = new File(filePath);
         return Files.readAllBytes(imageFile.toPath());

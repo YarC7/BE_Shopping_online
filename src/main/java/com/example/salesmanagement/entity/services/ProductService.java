@@ -8,22 +8,17 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import javax.persistence.EntityNotFoundException;
-
-import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.example.salesmanagement.entity.repositories.CategoryRepository;
 import com.example.salesmanagement.entity.repositories.ProductRepository;
 import com.example.salesmanagement.entity.utilities.Time;
 import com.example.salesmanagement.entity.models.Category;
 import com.example.salesmanagement.entity.models.Product;
-// import com.example.salesmanagement.entity.models.ProductTag;
-// import com.example.salesmanagement.entity.models.Tag;
+
 
 @Service
 public class ProductService {
@@ -70,13 +65,11 @@ public class ProductService {
         return one_Product.orElse(null);
     }
 
+
     public Product createProduct(String categoryId, Product product) {
         Category category = categoryRepository.findById(categoryId).orElse(null);
         if (category != null) {
             product.setCategory(category);
-
-
-
         return productRepository.save(product);
         }
         return null; // Or throw an exception if category is not found
@@ -130,10 +123,14 @@ public class ProductService {
     public void deleteProduct(String id) {
         productRepository.deleteById(id);
     }
-    public String uploadProductImage(String path,String id, MultipartFile file) throws IOException {
+    public String uploadProductImage(String path,String id,MultipartFile file) throws IOException {
 
         // construct file path using Product ID as file name
-        String fileName = id + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+        String originalFilename = file.getOriginalFilename();
+        String fileName = null;
+        if (originalFilename != null) {
+            fileName = id + originalFilename.substring(originalFilename.lastIndexOf("."));
+        }
         String filePath = path+ File.separator+fileName;
 
         // create image folder if it doesn't exist
@@ -152,7 +149,11 @@ public class ProductService {
     }
     public String updateProductImage(String path, String id, MultipartFile file) throws IOException {
         // construct file path using Product ID as file name
-        String fileName = id + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+        String originalFilename = file.getOriginalFilename();
+        String fileName = null;
+        if (originalFilename != null) {
+            fileName = id + originalFilename.substring(originalFilename.lastIndexOf("."));
+        }
         String filePath = path + File.separator + fileName;
     
         // save image file to folder
