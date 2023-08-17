@@ -2,8 +2,11 @@ package com.example.salesmanagement.entity.controllers;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,14 +37,10 @@ public class CartItemController {
         return ResponseEntity.ok(cartItem);
     }
 
-    @PostMapping("/{cartId}/store")
-    public  ResponseEntity<CartItem> store(@PathVariable String cartId,@RequestBody CartItem cartItem){
-        cartItem =cartItemService.createCartItem(cartId ,cartItem);
-        if (cartItem != null) {
-            return ResponseEntity.ok(cartItem);
-        } else {
-            return ResponseEntity.notFound().build(); // Or any other appropriate response
-        }
+    @PostMapping("/store")
+    public  ResponseEntity<CartItem> store(HttpServletRequest request,@RequestBody CartItem cartItem,Authentication authentication){
+        cartItemService.addCartItem(authentication,cartItem);
+        return ResponseEntity.ok(cartItem);
     }
 
     @PutMapping("/{id}/update")

@@ -11,23 +11,45 @@ import java.util.Optional;
 import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import com.example.salesmanagement.entity.repositories.CategoryRepository;
+import com.example.salesmanagement.entity.repositories.OverDetailSpecsRepository;
+import com.example.salesmanagement.entity.repositories.OverSpecsRepository;
 import com.example.salesmanagement.entity.repositories.ProductRepository;
+import com.example.salesmanagement.entity.repositories.ProductVariantRepository;
+import com.example.salesmanagement.entity.repositories.UserRepository;
 import com.example.salesmanagement.entity.utilities.Time;
 import com.example.salesmanagement.entity.models.Category;
 import com.example.salesmanagement.entity.models.Product;
 
+import com.example.salesmanagement.entity.models.User;
 
 @Service
 public class ProductService {
+
     @Autowired
     private ProductRepository productRepository;
 
     @Autowired
-    private CategoryRepository categoryRepository;
+    private UserRepository userRepository;
 
+    @Autowired
+    private CategoryRepository categoryRepository;
+    
+    @Autowired
+    private OverDetailSpecsRepository overDetailSpecsRepository;
+
+    @Autowired
+    private OverSpecsRepository overSpecsRepository;
+
+    @Autowired
+    private ProductVariantRepository productVariantRepository;
+   
+    public List<Product> searchByKeyword(String keyword) {
+        return productRepository.searchByKeyword(keyword);
+    }
 
     public Product updateProductCategory(String id, String categoryId) {
         // Retrieve the product from the database
@@ -65,34 +87,36 @@ public class ProductService {
         return one_Product.orElse(null);
     }
 
-
-    public Product createProduct(String categoryId, Product product) {
+    public Product createProduct(Authentication authentication,String categoryId, Product product) {
+        
+        String userEmail = authentication.getName();
+        Optional<User> one_User = userRepository.findByUserEmail(userEmail);
+        if (!one_User.isPresent()) {
+        }
+        User existingUser = one_User.get();
+        product.setSeller(existingUser);
         Category category = categoryRepository.findById(categoryId).orElse(null);
         if (category != null) {
-            product.setCategory(category);
-        return productRepository.save(product);
+
+            product.setCategory(category); 
+
+
+            productVariantRepository.saveAll(product.getProductVariants());
+            overSpecsRepository.saveAll(product.getOverSpecs());
+            overDetailSpecsRepository.saveAll(product.getOverDetailSpecs());
+            
+            Product createProduct = productRepository.save(product);
+            
+
+            // productRepository.save(createProduct);
+            // createProduct.getOverSpecs().addAll(product.getOverSpecs());
+            // createProduct.getOverDetailSpecs().addAll(product.getOverDetailSpecs());
+            // createProduct.getProductVariants().addAll(product.getProductVariants());
+
+            return createProduct;
         }
         return null; // Or throw an exception if category is not found
     }
-
-    // public ResponseEntity<Product> addProductTag(String id, Product product){
-    //     Optional<Product> optionalProduct = productRepository.findById(id);
-    
-    //     if (!optionalProduct.isPresent()) {
-    //         return ResponseEntity.notFound().build();
-    //     }
-    //     Product existingProduct = optionalProduct.get();
-
-    //     existingProduct.setTags(product.getTags());
-
-
-
-
-    //     Product addProductTag = productRepository.save(existingProduct);
-        
-    //     return ResponseEntity.ok(addProductTag);
-    // }
-
 
     public ResponseEntity<Product> updateProduct(String id, Product product) {
         Optional<Product> optionalProduct = productRepository.findById(id);
@@ -101,19 +125,39 @@ public class ProductService {
             return ResponseEntity.notFound().build();
         }
     
-        Product existingProduct = optionalProduct.get();
-    
+        Product existingProduct = optionalProduct.get();   
 
         existingProduct.setProductName(product.getProductName());
+        existingProduct.setProductImage(product.getProductImage());
+        existingProduct.setProductVideo(product.getProductVideo());
+        existingProduct.setProductSlug(product.getProductSlug());
         existingProduct.setProductDescription(product.getProductDescription());
-        existingProduct.setProductPrice(product.getProductPrice());
-        existingProduct.setProductQuantity(product.getProductQuantity());
+        existingProduct.setProductTag(product.getProductTag());
+
+        existingProduct.getProductVariants().clear();
+        existingProduct.getProductVariants().addAll(product.getProductVariants());
+
+        existingProduct.getOverSpecs().clear();
+        existingProduct.getOverSpecs().addAll(product.getOverSpecs());
+
+        existingProduct.getOverDetailSpecs().clear();
+        existingProduct.getOverDetailSpecs().addAll(product.getOverDetailSpecs());
+
+        // existingProduct.setNumberOfView();
+        existingProduct.setProductWarrantyPeriod(product.getProductWarrantyPeriod());
+        existingProduct.setProductDiscount(product.getProductDiscount());
+        existingProduct.setProductMinPrice(product.getProductMinPrice());
+        existingProduct.setProductMaxPrice(product.getProductMaxPrice());
+        // existingProduct.setNumberOfSold();
         existingProduct.setIsFeatured(product.getIsFeatured());
         existingProduct.setIsNewArrival(product.getIsNewArrival());
         existingProduct.setIsOnSale(product.getIsOnSale());
-        existingProduct.setYearOfProduct(product.getYearOfProduct());
-        existingProduct.setLocationOfProduct(product.getLocationOfProduct());
-        existingProduct.setUpdateAt(Time.getCurrentDate());
+        existingProduct.setIsOutOfStock(product.getIsOutOfStock());
+        // existingProduct.setRating(null);
+        existingProduct.setNumberOfReview(null);
+        existingProduct.setYearOfProduction(product.getYearOfProduction());
+        existingProduct.setProductOrigin(product.getProductOrigin());
+        existingProduct.setUpdatedAt(Time.getCurrentDate());
         
         Product updatedProduct = productRepository.save(existingProduct);
     

@@ -16,7 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import com.example.salesmanagement.entity.enumtypes.OrderStatus;
+import com.example.salesmanagement.entity.enumtypes.Status;
 import com.example.salesmanagement.entity.utilities.Time;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
@@ -41,13 +41,12 @@ public class Order {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "cart_id")
     private Cart cart;
-
     
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
-    private OrderStatus orderStatus;
+    private Status orderStatus;
     
     @Column(name = "total_amount" , nullable = true)
     private BigDecimal totalAmount;
@@ -65,10 +64,10 @@ public class Order {
     private String order_date = Time.getDeadCurrentDate()  ;
     
     @Column(length = 100, nullable = true)
-    private String createAt = Time.getDeadCurrentDate();
+    private String createdAt = Time.getDeadCurrentDate();
 
     @Column(length = 100, nullable = true)
-    private String updateAt = Time.getDeadCurrentDate();
+    private String updatedAt = Time.getDeadCurrentDate();
 
 
 

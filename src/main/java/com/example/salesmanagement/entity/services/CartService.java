@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.example.salesmanagement.entity.models.Cart;
@@ -20,8 +21,6 @@ public class CartService {
 
     @Autowired
     private UserRepository userRepository;
-
-
 
     public List<Cart> getAllCarts(){
         List<Cart> carts = cartRepository.findAll();
@@ -40,8 +39,20 @@ public class CartService {
             return cartRepository.save(cart);
         }
         return null; // Or throw an exception if category is not found
-
     }
+
+    public Cart createCart1(Authentication authentication, Cart cart) {
+        String userEmail = authentication.getName();
+        Optional<User> one_User = userRepository.findByUserEmail(userEmail);
+        User existingUser = one_User.get();    
+        if (existingUser != null) {
+            cart.setUser(existingUser);
+            return cartRepository.save(cart);
+        }
+        return null; // Or throw an exception if category is not found
+    }
+
+    
 
     public ResponseEntity<Cart> updateCart(String id, Cart cart) {
         Optional<Cart> optionalCart = cartRepository.findById(id);

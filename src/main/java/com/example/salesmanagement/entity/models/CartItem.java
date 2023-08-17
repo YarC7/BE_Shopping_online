@@ -48,15 +48,15 @@ public class CartItem {
    @Column(name = "is_checked", nullable = false)
    private Boolean isChecked;
    
-   public BigDecimal getTotalPrice() {
-      return product.getProductPrice().multiply(BigDecimal.valueOf(quantity));
-   }
+   // public BigDecimal getTotalPrice() {
+   //    return product.getProductPrice().multiply(BigDecimal.valueOf(quantity));
+   // }
 
    @Column(length = 100, nullable = true)
-   private String createAt = Time.getDeadCurrentDate();
+   private String createdAt = Time.getDeadCurrentDate();
    
    @Column(length = 100, nullable = true)
-   private String updateAt = Time.getDeadCurrentDate();
+   private String updatedAt = Time.getDeadCurrentDate();
    
 
 

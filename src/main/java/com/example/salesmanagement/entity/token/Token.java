@@ -9,7 +9,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-
 import com.example.salesmanagement.entity.models.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

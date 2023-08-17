@@ -1,41 +1,64 @@
 package com.example.salesmanagement.entity.models;
 
-
-import java.util.UUID;
-
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-
 import com.example.salesmanagement.entity.utilities.Time;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
+
 @Data
 @Entity
 @Table(name = "addresses")
 public class Address {
     @Id
-    @Column(name = "address_id",length = 50, nullable = false, updatable = false)
-    private String addressId = "AD-" + UUID.randomUUID().toString();
+    @GeneratedValue(strategy = GenerationType.AUTO) // or GenerationType.IDENTITY for numeric fields
+    @Column(name = "address_id", length = 50, nullable = false, updatable = false)
+    private Integer addressId;
+
+    @Column(length = 50, nullable = true)
+    private String typeAddress;
+
+    @Column(length = 50, nullable = true)
+    private String street;
+
+    @Column(length = 50, nullable = true)
+    private String ward;
     
-    @Column(length = 50, nullable = false)
-    private String streetAddress ;
+    @Column(name = "district",length = 50, nullable = true)
+    private String district;
 
-    @Column(length = 50, nullable = false)
-    private String city;
+    @Column(name = "city",length = 50, nullable = true)
+    private String province;
 
-    @Column(length = 50, nullable = false)
-    private String state;
+    @Column(name = "country")
+    private String country;
 
-    @Column(length = 6, nullable = false)
+    @Column(length = 6, nullable = true)
     private String zipCode;
+
+    // @Column(name = "default")
+    // private boolean isDefault = true;
+
+    @Column(length = 50, nullable = true)
+    private String note ;
     
     @Column(length = 100, nullable = true)
-    private String createAt = Time.getDeadCurrentDate();
+    private String createdAt = Time.getDeadCurrentDate();
 
     @Column(length = 100, nullable = true)
-    private String updateAt = Time.getDeadCurrentDate();
+    private String updatedAt = Time.getDeadCurrentDate();
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    public User user;
 }

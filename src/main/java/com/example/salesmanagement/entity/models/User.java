@@ -1,11 +1,8 @@
 package com.example.salesmanagement.entity.models;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
-// import javax.persistence.CascadeType;
-// import javax.persistence.FetchType;
-// import javax.persistence.JoinColumn;
-// import javax.persistence.ManyToOne;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -40,13 +37,17 @@ public class User implements UserDetails {
     @Column(length = 100, nullable = true , unique = true , updatable = false)
     private String userEmail;
 
+    //if user are seller , userName become name of shop.
+    @Column(length = 100, nullable = true , unique = true)
+    private String userName;
+
     @Column(length = 100, nullable = true)
     private String userFirstName;
 
     @Column(length = 100, nullable = true)
     private String userLastName;
     
-    @Column(length = 100, nullable = true)
+    @Column(length = 100 , nullable = false)
     private String userPassword;
 
     @Column(length = 11, nullable = true)
@@ -66,19 +67,22 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user")
     private List<Token> tokens;
-    
-    // @JsonBackReference
-    // @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    // @JoinColumn(name = "userShippingAddress", nullable = true)
-    // private Address userShippingAddress;
+
+    @Builder.Default
+    @Column(name = "is_activated")
+    private boolean isActivated = false;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "user")
+    private List<Address> userShippingAddress = new ArrayList<>();
     
     @Builder.Default
     @Column(length = 100, nullable = true)
-    private String createAt = Time.getDeadCurrentDate();
+    private String createdAt = Time.getDeadCurrentDate();
 
     @Builder.Default
     @Column(length = 100, nullable = true)
-    private String updateAt = Time.getDeadCurrentDate();
+    private String updatedAt = Time.getDeadCurrentDate();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -113,6 +117,10 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public String getUserName() {
+        return userName;
     }
 
     

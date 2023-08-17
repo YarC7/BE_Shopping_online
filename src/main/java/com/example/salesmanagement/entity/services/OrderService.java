@@ -67,7 +67,7 @@ public class OrderService {
 
 
         existingOrder.setOrderItems(order.getOrderItems());
-        existingOrder.setUpdateAt(Time.getDeadCurrentDate());
+        existingOrder.setUpdatedAt(Time.getDeadCurrentDate());
         Order updatedOrder = orderRepository.save(existingOrder);
         return ResponseEntity.ok(updatedOrder);
     }

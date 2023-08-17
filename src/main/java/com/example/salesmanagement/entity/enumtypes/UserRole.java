@@ -35,7 +35,15 @@ public enum UserRole {
                     ADMINISTRATOR_READ,
                     ADMINISTRATOR_UPDATE,
                     ADMINISTRATOR_DELETE,
-                    ADMINISTRATOR_CREATE
+                    ADMINISTRATOR_CREATE,
+                    CUSTOMER_READ,
+                    CUSTOMER_UPDATE,
+                    CUSTOMER_DELETE,
+                    CUSTOMER_CREATE,
+                    SELLER_READ,
+                    SELLER_UPDATE,
+                    SELLER_DELETE,
+                    SELLER_CREATE
             )
     ),
     CUSTOMER(
@@ -51,9 +59,14 @@ public enum UserRole {
                     SELLER_READ,
                     SELLER_UPDATE,
                     SELLER_DELETE,
-                    SELLER_CREATE
+                    SELLER_CREATE,
+                    CUSTOMER_READ,
+                    CUSTOMER_UPDATE,
+                    CUSTOMER_DELETE,
+                    CUSTOMER_CREATE
             )
     )
+    
 
     ;
 

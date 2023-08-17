@@ -40,9 +40,9 @@ public class OrderItem {
     private BigDecimal totalPrice;
 
     @Column(length = 100, nullable = true)
-    private String createAt = Time.getDeadCurrentDate();
+    private String createdAt = Time.getDeadCurrentDate();
 
     @Column(length = 100, nullable = true)
-    private String updateAt = Time.getDeadCurrentDate();
+    private String updatedAt = Time.getDeadCurrentDate();
 
 }
