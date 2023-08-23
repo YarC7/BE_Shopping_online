@@ -1,17 +1,25 @@
 package com.example.salesmanagement.entity.services;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+
+import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import com.example.salesmanagement.entity.models.Cart;
 import com.example.salesmanagement.entity.models.CartItem;
+import com.example.salesmanagement.entity.models.Product;
 import com.example.salesmanagement.entity.models.User;
+import com.example.salesmanagement.entity.models.Variant;
 import com.example.salesmanagement.entity.repositories.CartItemRepository;
 import com.example.salesmanagement.entity.repositories.CartRepository;
+import com.example.salesmanagement.entity.repositories.ProductRepository;
 import com.example.salesmanagement.entity.repositories.UserRepository;
 import com.example.salesmanagement.entity.utilities.Time;
 
@@ -27,6 +35,28 @@ public class CartItemService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Transactional
+    public Product getProductionInfo( String productId,String sku){
+        Optional<Product> one_Product = productRepository.findById(productId);
+        if (one_Product.isEmpty()) {
+            throw new EntityNotFoundException("Product not found with ID: " + productId);
+        }
+        Product newProduct = new Product();
+        newProduct = one_Product.get();
+        List<Variant> Variant = newProduct.getVariant();
+        for (Variant optional : Variant){
+            if (optional.getSku() == sku){
+            
+            }
+            newProduct.getVariant().add(0, optional);
+        }     
+        return newProduct;
+
+    }
+
     public List<CartItem> getAllCartItems(){
         List<CartItem> cartItems = cartItemRepository.findAll();
         return cartItems;
@@ -37,35 +67,57 @@ public class CartItemService {
         return one_CartItem.orElse(null);
     }
 
-    public void addCartItem(Authentication authentication, CartItem cartItem) {
+    public BigDecimal getTotalPrice(int quantity, String productId,String sku) {
+
+        Product product = getProductionInfo(productId,sku);
+
+      return product.getProductMinPrice().multiply(BigDecimal.valueOf(quantity));
+      
+   }
+
+    @Transactional
+    public CartItem addCartItem(Authentication authentication, CartItem cartItem) {
         String userEmail = authentication.getName();
-        Optional<User> one_User = userRepository.findByUserEmail(userEmail);
-        User existingUser = one_User.orElseThrow(() -> new RuntimeException("User not found"));
-
-        if (cartItem == null || cartItem.getProduct() == null || cartItem.getProduct().getSeller() == null) {
-            throw new IllegalArgumentException("Invalid cart item");
-        }
-
-        String sellerUserName = cartItem.getProduct().getSeller().getUserName();
-        if (sellerUserName == null || sellerUserName.isEmpty()) {
-            throw new IllegalArgumentException("Invalid seller user name");
-        }
-
+        Optional<User> optionalUser = userRepository.findByUserEmail(userEmail);
+    
+        User existingUser = optionalUser.orElseThrow(() -> new UsernameNotFoundException("User not found."));
+    
+        String productId = cartItem.getProductId();
+        // String sku = cartItem.getSku();
+        // Product product = getProductionInfo(productId,sku);
+        Optional<Product> optionalProduct = productRepository.findById(productId);
+        Product existingProduct = optionalProduct.orElseThrow(() -> new ProductNotFoundException("Product not found."));
+    
+        String sellerUserName = existingProduct.getSeller().getUserName();
+    
         Optional<Cart> optionalCart = cartRepository.findByShopName(sellerUserName);
-        Cart newCart;
-        if (optionalCart.isPresent()) {
-            newCart = optionalCart.get();
-        } else {
-            // Create a new cart with the name of the product seller
-            newCart = new Cart();
-            newCart.setUser(existingUser);
-            newCart.setShopName(sellerUserName);
-            cartRepository.save(newCart);
+
+
+        if (optionalCart.isPresent()){
+            Cart cart = optionalCart.get();
+            cartItem.setCartId(cart.getCartId());
+            cartItem.setProductId(productId);
+            CartItem createdCartItem = cartItemRepository.save(cartItem);
+            return createdCartItem;
         }
-        cartItem.setCart(newCart);
-        cartItem.setTotalPrice(cartItem.getTotalPrice());
-        cartItemRepository.save(cartItem);
+        else{
+            Cart cart = createAndSaveNewCart(existingUser, sellerUserName);
+            cartItem.setCartId(cart.getCartId());
+            cartItem.setProductId(productId);
+            CartItem createdCartItem = cartItemRepository.save(cartItem);
+            return createdCartItem;
+        }
+
     }
+    
+    private Cart createAndSaveNewCart(User user, String shopName) {
+        Cart newCart = new Cart();
+        newCart.setUser(user);
+        newCart.setShopName(shopName);
+        cartRepository.save(newCart);
+        return newCart;
+    }
+    
 
 
     public ResponseEntity<CartItem> updateCartItem(String id, CartItem cartItem) {
@@ -73,7 +125,8 @@ public class CartItemService {
         if (!optionalCartItem.isPresent()) {
             return ResponseEntity.notFound().build();
         }
-        CartItem existingCartItem = optionalCartItem.get();   
+        CartItem existingCartItem = optionalCartItem.get();
+        existingCartItem.setSku(cartItem.getSku());   
         existingCartItem.setQuantity(cartItem.getQuantity());
         existingCartItem.setIsChecked(cartItem.getIsChecked());
         existingCartItem.setUpdatedAt(Time.getCurrentDate());

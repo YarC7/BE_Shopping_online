@@ -8,18 +8,22 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 
 
 @Data
 @Entity
-public class ProductVariants{
+public class Variant{
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = true,unique = true)
     private String sku;
 
     @Column(nullable = true)
@@ -40,12 +44,10 @@ public class ProductVariants{
     @Column(nullable = false)
     private Integer sold;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties("id")
+    @OneToMany(cascade = CascadeType.ALL)
     private List<OverSpecs> overSpecs;
     
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties("id")
+    @OneToMany(cascade = CascadeType.ALL)
     private List<OverDetailSpecs> overDetailSpecs;
         
     @Column(nullable = true)

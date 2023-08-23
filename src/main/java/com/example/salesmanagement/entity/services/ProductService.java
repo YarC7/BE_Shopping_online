@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -18,16 +20,21 @@ import com.example.salesmanagement.entity.repositories.CategoryRepository;
 import com.example.salesmanagement.entity.repositories.OverDetailSpecsRepository;
 import com.example.salesmanagement.entity.repositories.OverSpecsRepository;
 import com.example.salesmanagement.entity.repositories.ProductRepository;
-import com.example.salesmanagement.entity.repositories.ProductVariantRepository;
 import com.example.salesmanagement.entity.repositories.UserRepository;
+import com.example.salesmanagement.entity.repositories.VariantRepository;
 import com.example.salesmanagement.entity.utilities.Time;
 import com.example.salesmanagement.entity.models.Category;
+import com.example.salesmanagement.entity.models.OverDetailSpecs;
+import com.example.salesmanagement.entity.models.OverSpecs;
 import com.example.salesmanagement.entity.models.Product;
-
+import com.example.salesmanagement.entity.models.Variant;
 import com.example.salesmanagement.entity.models.User;
 
 @Service
 public class ProductService {
+
+    @Autowired
+    private VariantRepository variantRepository;
 
     @Autowired
     private ProductRepository productRepository;
@@ -44,8 +51,31 @@ public class ProductService {
     @Autowired
     private OverSpecsRepository overSpecsRepository;
 
-    @Autowired
-    private ProductVariantRepository productVariantRepository;
+
+
+    public void GetterSetter(Product exist , Product product){
+        exist.setProductName(product.getProductName());
+        exist.setProductImage(product.getProductImage());
+        exist.setProductVideo(product.getProductVideo());
+        exist.setProductSlug(product.getProductSlug());
+        exist.setProductDescription(product.getProductDescription());
+        exist.setProductTag(product.getProductTag());
+        exist.setProductWarrantyPeriod(product.getProductWarrantyPeriod());
+        exist.setProductDiscount(product.getProductDiscount());
+        exist.setProductMinPrice(product.getProductMinPrice());
+        exist.setProductMaxPrice(product.getProductMaxPrice());
+        // exist.setNumberOfSold();
+        exist.setIsFeatured(product.getIsFeatured());
+        exist.setIsNewArrival(product.getIsNewArrival());
+        exist.setIsOnSale(product.getIsOnSale());
+        exist.setIsOutOfStock(product.getIsOutOfStock());
+        // exist.setRating(null);
+        exist.setNumberOfReview(null);
+        exist.setYearOfProduction(product.getYearOfProduction());
+        exist.setProductOrigin(product.getProductOrigin());  
+
+        
+    }
    
     public List<Product> searchByKeyword(String keyword) {
         return productRepository.searchByKeyword(keyword);
@@ -87,6 +117,73 @@ public class ProductService {
         return one_Product.orElse(null);
     }
 
+    @Transactional
+    public Product getProductionInfo( String productId,String skuMatch){
+        Optional<Product> one_Product = productRepository.findById(productId);
+        if (one_Product.isEmpty()) {
+            throw new EntityNotFoundException("Product not found with ID: " + productId);
+        }
+        Product existingProduct = one_Product.get();
+
+        List<Variant> Variant = existingProduct.getVariant();
+        List<Variant> matchingVariants = new ArrayList<>();
+        for (Variant optional : Variant){
+            String skuHere = optional.getSku();
+            if (skuHere.trim().compareTo(skuMatch.trim()) == 0){
+                Variant temporaryVariant = optional;
+                matchingVariants.add(temporaryVariant);
+                break;
+            }
+        }     
+        Product temporaryProduct = new Product();
+        temporaryProduct.setProductId(existingProduct.getProductId());
+        GetterSetter(temporaryProduct,existingProduct);
+        temporaryProduct.setVariant(matchingVariants);
+        temporaryProduct.getOverDetailSpecs().addAll(existingProduct.getOverDetailSpecs());
+        temporaryProduct.getOverSpecs().addAll(existingProduct.getOverSpecs());
+
+        // You can set other fields of the temporary product here
+        
+        return temporaryProduct;
+
+    }
+
+    public Product addVariant( String productId,Variant variants){
+        Optional<Product> one_Product = productRepository.findById(productId);
+        if (one_Product.isEmpty()) {
+            throw new EntityNotFoundException("Product not found with ID: " + productId);
+        }
+        Product existingProduct = one_Product.get();
+        int index = existingProduct.getVariant().size() + 1;
+        existingProduct.getVariant().add(index, variants);
+
+        return existingProduct;
+    }
+
+    public Product addOverSpecs( String productId,OverSpecs overSpecs){
+        Optional<Product> one_Product = productRepository.findById(productId);
+        if (one_Product.isEmpty()) {
+            throw new EntityNotFoundException("Product not found with ID: " + productId);
+        }
+        Product existingProduct = one_Product.get();
+        int index = existingProduct.getOverSpecs().size() + 1;
+        existingProduct.getOverSpecs().add(index, overSpecs);
+
+        return existingProduct;
+    }
+    public Product addOverDetailSpecs( String productId,OverDetailSpecs overDetailSpecs){
+        Optional<Product> one_Product = productRepository.findById(productId);
+        if (one_Product.isEmpty()) {
+            throw new EntityNotFoundException("Product not found with ID: " + productId);
+        }
+        Product existingProduct = one_Product.get();
+        int index = existingProduct.getOverDetailSpecs().size() + 1;
+        existingProduct.getOverDetailSpecs().add(index, overDetailSpecs);
+
+        return existingProduct;
+    }
+
+
     public Product createProduct(Authentication authentication,String categoryId, Product product) {
         
         String userEmail = authentication.getName();
@@ -100,18 +197,11 @@ public class ProductService {
 
             product.setCategory(category); 
 
-
-            productVariantRepository.saveAll(product.getProductVariants());
+            variantRepository.saveAll(product.getVariant());
             overSpecsRepository.saveAll(product.getOverSpecs());
             overDetailSpecsRepository.saveAll(product.getOverDetailSpecs());
             
             Product createProduct = productRepository.save(product);
-            
-
-            // productRepository.save(createProduct);
-            // createProduct.getOverSpecs().addAll(product.getOverSpecs());
-            // createProduct.getOverDetailSpecs().addAll(product.getOverDetailSpecs());
-            // createProduct.getProductVariants().addAll(product.getProductVariants());
 
             return createProduct;
         }
@@ -134,8 +224,8 @@ public class ProductService {
         existingProduct.setProductDescription(product.getProductDescription());
         existingProduct.setProductTag(product.getProductTag());
 
-        existingProduct.getProductVariants().clear();
-        existingProduct.getProductVariants().addAll(product.getProductVariants());
+        existingProduct.getVariant().clear();
+        existingProduct.getVariant().addAll(product.getVariant());
 
         existingProduct.getOverSpecs().clear();
         existingProduct.getOverSpecs().addAll(product.getOverSpecs());

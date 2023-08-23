@@ -3,16 +3,11 @@ package com.example.salesmanagement.entity.models;
 import java.math.BigDecimal;
 // import java.util.List;
 import java.util.UUID;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import com.example.salesmanagement.entity.utilities.Time;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,14 +25,15 @@ public class CartItem {
    @Column(name = "cart_item_id",length = 50, nullable = false, updatable = false)
    private String cartItemId = "CI-" + UUID.randomUUID().toString();
  
-   @JsonBackReference
-   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-   @JoinColumn(name = "cart_id")
-   private Cart cart;
 
-   @ManyToOne(cascade = CascadeType.ALL)
-   @JoinColumn(name = "product_id", nullable = true)
-   private Product product; 
+   @Column(name = "cart_id")
+   private String cartId;
+
+   @Column(name = "product_id")
+   private String productId; 
+
+   @Column(name = "sku")
+   private String sku;
 
    @Column(name = "quantity")
    private int quantity;
@@ -48,10 +44,6 @@ public class CartItem {
    @Column(name = "is_checked", nullable = false)
    private Boolean isChecked;
    
-   // public BigDecimal getTotalPrice() {
-   //    return product.getProductPrice().multiply(BigDecimal.valueOf(quantity));
-   // }
-
    @Column(length = 100, nullable = true)
    private String createdAt = Time.getDeadCurrentDate();
    

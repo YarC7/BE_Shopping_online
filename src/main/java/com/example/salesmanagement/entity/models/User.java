@@ -1,4 +1,5 @@
 package com.example.salesmanagement.entity.models;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -10,6 +11,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import com.example.salesmanagement.entity.enumtypes.UserRole;
@@ -47,14 +49,15 @@ public class User implements UserDetails {
     @Column(length = 100, nullable = true)
     private String userLastName;
     
-    @Column(length = 100 , nullable = false)
+    @Column
     private String userPassword;
 
     @Column(length = 11, nullable = true)
     private String userPhone;
 
-    @Column(length = 300, nullable = true)
-    private String userAddress;
+    @Builder.Default
+    @OneToMany(mappedBy = "user")
+    private List<Address> userAddress = new ArrayList<>();
 
     @Column(length = 300, nullable = true)
     private String userNationality;
@@ -71,10 +74,9 @@ public class User implements UserDetails {
     @Builder.Default
     @Column(name = "is_activated")
     private boolean isActivated = false;
-
-    @Builder.Default
-    @OneToMany(mappedBy = "user")
-    private List<Address> userShippingAddress = new ArrayList<>();
+    
+    @Transient
+    private Address userShippingAddress;
     
     @Builder.Default
     @Column(length = 100, nullable = true)

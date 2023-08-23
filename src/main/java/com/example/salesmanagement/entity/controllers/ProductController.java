@@ -54,6 +54,16 @@ public class ProductController {
     //     return ResponseEntity.ok(products);
     // }
 
+    @GetMapping("/{id}/")
+    public ResponseEntity<?> getProductInfo(@PathVariable(value = "id") String id,@RequestParam String sku){
+        
+        if (productService.getProductionInfo(id, sku) != null) {
+            return ResponseEntity.ok(productService.getProductionInfo(id, sku));
+        } else {
+            return ResponseEntity.notFound().build(); // Or any other appropriate response
+        }
+    }
+
 
 
     
@@ -80,7 +90,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}/delete")
-    @PreAuthorize("hasAuthority('SELLER')")
+    @PreAuthorize("hasAuthority('seller:delete')")
     public ResponseEntity<Void> deleteProduct(@PathVariable(value = "id") String id) {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();

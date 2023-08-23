@@ -123,7 +123,7 @@ public class UserService{
         if (!one_User.isPresent()) {
             return ResponseEntity.notFound().build();
         }
-        User existingUser = one_User.get();
+        // User existingUser = one_User.get();
         List<Address> listAddress = new ArrayList<>();
         Address existingAddress = new Address();
         existingAddress.setTypeAddress(address.getTypeAddress());
@@ -134,54 +134,54 @@ public class UserService{
         existingAddress.setCountry(address.getCountry());
         existingAddress.setZipCode(address.getZipCode());
         existingAddress.setNote(address.getNote());
-        existingAddress.setUser(existingUser);
+        // existingAddress.setUser(existingUser);
         addressRepository.save(existingAddress);
         listAddress.add(existingAddress);
-        existingUser.setUserShippingAddress(listAddress);
+        // existingUser.setUserShippingAddress(listAddress);
         return ResponseEntity.ok(existingAddress);
     }
 
-    public ResponseEntity<?> updateAddress(Authentication authentication, Address address , Integer index){
-        String userEmail = authentication.getName();
-        Optional<User> one_User = userRepository.findByUserEmail(userEmail);
-        if (!one_User.isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
-        User existingUser = one_User.get();
-        Address existingAddress = existingUser.getUserShippingAddress().get(index);
-        existingAddress.setTypeAddress(address.getTypeAddress());
-        existingAddress.setStreet(address.getStreet());
-        existingAddress.setWard(address.getWard());
-        existingAddress.setDistrict(address.getDistrict());
-        existingAddress.setProvince(address.getProvince());
-        existingAddress.setCountry(address.getCountry());
-        existingAddress.setZipCode(address.getZipCode());
-        existingAddress.setNote(address.getNote());
-        addressRepository.save(existingAddress);
-        User updatedUser = userRepository.save(existingUser);
-        return ResponseEntity.ok(updatedUser);
-    }
+    // public ResponseEntity<?> updateAddress(Authentication authentication, Address address , Integer index){
+    //     String userEmail = authentication.getName();
+    //     Optional<User> one_User = userRepository.findByUserEmail(userEmail);
+    //     if (!one_User.isPresent()) {
+    //         return ResponseEntity.notFound().build();
+    //     }
+    //     User existingUser = one_User.get();
+    //     Address existingAddress = existingUser.getUserShippingAddress().get(index);
+    //     existingAddress.setTypeAddress(address.getTypeAddress());
+    //     existingAddress.setStreet(address.getStreet());
+    //     existingAddress.setWard(address.getWard());
+    //     existingAddress.setDistrict(address.getDistrict());
+    //     existingAddress.setProvince(address.getProvince());
+    //     existingAddress.setCountry(address.getCountry());
+    //     existingAddress.setZipCode(address.getZipCode());
+    //     existingAddress.setNote(address.getNote());
+    //     addressRepository.save(existingAddress);
+    //     User updatedUser = userRepository.save(existingUser);
+    //     return ResponseEntity.ok(updatedUser);
+    // }
 
 
-    public List<Address> showAddress(Authentication authentication){
-        String userEmail = authentication.getName();
-        Optional<User> one_User = userRepository.findByUserEmail(userEmail);
+    // public List<Address> showAddress(Authentication authentication){
+    //     String userEmail = authentication.getName();
+    //     Optional<User> one_User = userRepository.findByUserEmail(userEmail);
         
-        User existingUser = one_User.get();
-        List<Address> existingAddress = new ArrayList<>();
-        existingUser.getUserShippingAddress().forEach(existingAddress::add);
-        return existingAddress;
-    }
+    //     User existingUser = one_User.get();
+    //     List<Address> existingAddress = new ArrayList<>();
+    //     existingUser.getUserShippingAddress().forEach(existingAddress::add);
+    //     return existingAddress;
+    // }
 
-    public void deleteAddress(Authentication authentication, Integer index) {
-        String userEmail = authentication.getName();
-        Optional<User> one_User = userRepository.findByUserEmail(userEmail);
-        User existingUser = one_User.get();
-        Address existingAddress =  existingUser.getUserShippingAddress().get(index);
-        existingUser.getUserShippingAddress().remove(0);
-        String id = existingAddress.getAddressId().toString().trim();
-        addressRepository.deleteById(id);
-    }
+    // public void deleteAddress(Authentication authentication, Integer index) {
+    //     String userEmail = authentication.getName();
+    //     Optional<User> one_User = userRepository.findByUserEmail(userEmail);
+    //     User existingUser = one_User.get();
+    //     Address existingAddress =  existingUser.getUserShippingAddress().get(index);
+    //     existingUser.getUserShippingAddress().remove(0);
+    //     String id = existingAddress.getAddressId().toString().trim();
+    //     addressRepository.deleteById(id);
+    // }
 
 
     public void deleteUser(String id) {

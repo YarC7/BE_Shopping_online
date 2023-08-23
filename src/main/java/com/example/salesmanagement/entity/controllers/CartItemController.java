@@ -1,9 +1,6 @@
 package com.example.salesmanagement.entity.controllers;
 
 import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -15,7 +12,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.example.salesmanagement.entity.models.CartItem;
 import com.example.salesmanagement.entity.services.CartItemService;
 
@@ -38,9 +34,17 @@ public class CartItemController {
     }
 
     @PostMapping("/store")
-    public  ResponseEntity<CartItem> store(HttpServletRequest request,@RequestBody CartItem cartItem,Authentication authentication){
-        cartItemService.addCartItem(authentication,cartItem);
-        return ResponseEntity.ok(cartItem);
+    public  ResponseEntity<CartItem> store(@RequestBody CartItem cartItem,Authentication authentication){
+        try {
+            
+            // Save the CartItem entity using your service
+            CartItem createCartItem = cartItemService.addCartItem(authentication,cartItem);
+            
+            return ResponseEntity.ok(createCartItem);
+        } catch (Exception e) {
+            // Handle exceptions
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PutMapping("/{id}/update")

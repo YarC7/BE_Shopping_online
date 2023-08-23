@@ -9,10 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
 import com.example.salesmanagement.entity.utilities.Time;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import lombok.Data;
 
 @Data
@@ -23,6 +20,12 @@ public class Address {
     @GeneratedValue(strategy = GenerationType.AUTO) // or GenerationType.IDENTITY for numeric fields
     @Column(name = "address_id", length = 50, nullable = false, updatable = false)
     private Integer addressId;
+
+    @Column(length = 50, nullable = true)
+    private String name;
+
+    @Column(length = 11, nullable = true)
+    private String phone;
 
     @Column(length = 50, nullable = true)
     private String typeAddress;
@@ -57,7 +60,6 @@ public class Address {
     @Column(length = 100, nullable = true)
     private String updatedAt = Time.getDeadCurrentDate();
 
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     public User user;

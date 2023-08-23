@@ -1,5 +1,7 @@
 package com.example.salesmanagement.entity.token;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -38,6 +40,8 @@ public class Token {
   public boolean revoked;
 
   public boolean expired;
+
+  private LocalDateTime confirmedAt;
 
   @JsonIgnore
   @ManyToOne(fetch = FetchType.LAZY)

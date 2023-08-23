@@ -1,16 +1,13 @@
 package com.example.salesmanagement.entity.auth;
 
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import javax.transaction.Transactional;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import com.example.salesmanagement.entity.auth.Mail.EmailSender;
 import com.example.salesmanagement.entity.configs.JwtService;
 import com.example.salesmanagement.entity.enumtypes.UserRole;
@@ -21,6 +18,7 @@ import com.example.salesmanagement.entity.token.TokenRepository;
 import com.example.salesmanagement.entity.token.TokenType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -48,35 +46,43 @@ public class AuthenticationService {
             .userLastName(request.getUserLastName())
             .userPassword(passwordEncoder.encode(request.getUserPassword()))
             .userPhone(request.getUserPhone())
-            .userAddress(request.getUserAddress())
             .userNationality(request.getUserNationality())
             .userGender(request.getUserGender())
             .userRole(UserRole.CUSTOMER)
             .build(); 
             var savedUser = userRepository.save(user);
             var jwtToken = jwtService.generateToken(user);
-            // var refreshToken = jwtService.generateRefreshToken(user);
+            var refreshToken = jwtService.generateRefreshToken(user);
 
-            String link = "http://localhost:1707/api/auth/confirm?token=" + jwtToken;
-            emailSender.send(request.getUserEmail(),buildEmail(request.getUserFirstName(),link));
-            setActive(savedUser);
-             
+            // String link = "http://localhost:1707/api/auth/confirm?token=" + jwtToken;
 
-
-
+            // emailSender.send(request.getUserEmail(),buildEmail(request.getUserFirstName(),link));
             saveUserToken(savedUser, jwtToken);
             return AuthenticationResponse.builder()
-                .url(link)
-                // .accessToken(jwtToken)
-                //     .refreshToken(refreshToken)
+                // .url(link)
+                .accessToken(jwtToken)
+                    .refreshToken(refreshToken)
                 .build();
-            
+    }
+
+    @Transactional
+    public String confirmToken(String token) {
+        Optional<Token> confirmationToken = tokenRepository.findByToken(token);
+
+        Token tokenn = confirmationToken.get();
+        if (tokenn.getConfirmedAt() != null) {
+            throw new IllegalStateException("email already confirmed");
+        }
+        User user = tokenn.getUser();
+        setActive(user);
+        return "confirmed" +"\r\n"+ "token:" + token;
     }
 
     public void setActive(User user){
         user.setActivated(true);
         userRepository.save(user);
     }
+
     public AuthenticationResponse registers(RegisterRequest request) {
         var user = User.builder()
             .userEmail(request.getUserEmail()) 
@@ -85,7 +91,6 @@ public class AuthenticationService {
             .userLastName(request.getUserLastName())
             .userPassword(passwordEncoder.encode(request.getUserPassword()))
             .userPhone(request.getUserPhone())
-            .userAddress(request.getUserAddress())
             .userNationality(request.getUserNationality())
             .userGender(request.getUserGender())
             .userRole(UserRole.SELLER)
@@ -170,14 +175,14 @@ public class AuthenticationService {
         }
     } 
 
-    private void forgotPassword(String token,ResetPasswordRequest request){
+    public void forgotPassword(String token,ResetPasswordRequest request){
         String userEmail = jwtService.extractUsername(token);
         if (userEmail != null) {
             resetPassword(userEmail,request);       
         }
     }
 
-    private void resetPassword(String email,ResetPasswordRequest request){
+    public void resetPassword(String email,ResetPasswordRequest request){
         var pass = request.getPassword();
         var repass = request.getRePassword();
         if (pass==repass){
@@ -185,7 +190,6 @@ public class AuthenticationService {
             User existinguser = user.get();
             existinguser.setUserPassword(passwordEncoder.encode(pass));
             var jwtToken = jwtService.generateToken(existinguser);
-            var refreshToken = jwtService.generateRefreshToken(existinguser);
             revokeAllUserTokens(existinguser);
             saveUserToken(existinguser, jwtToken);
         }

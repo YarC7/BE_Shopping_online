@@ -45,17 +45,17 @@ public class Product {
     @Column
     private String productTag;
 
-    @JsonIgnoreProperties("id")
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OverSpecs> overSpecs;
+     
+    @OneToMany(cascade = CascadeType.ALL,fetch=FetchType.LAZY, orphanRemoval = true)
+    private List<OverSpecs> overSpecs = new ArrayList<OverSpecs>();
 
-    @JsonIgnoreProperties("id")
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OverDetailSpecs> overDetailSpecs;
+     
+    @OneToMany(cascade = CascadeType.ALL,fetch=FetchType.LAZY, orphanRemoval = true)
+    private List<OverDetailSpecs> overDetailSpecs = new ArrayList<OverDetailSpecs>();
 
-    @JsonIgnoreProperties("id")
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductVariants> productVariants;
+     
+    @OneToMany(cascade = CascadeType.DETACH,fetch=FetchType.LAZY, orphanRemoval = true)
+    private List<Variant>  Variant = new ArrayList<Variant>();
 
     @Column(nullable = true)
     private Integer numberOfView;
@@ -93,14 +93,17 @@ public class Product {
     @Column
     private Boolean isOutOfStock;
 
+    @Column
+    private int inStock;
+
     @Column(name = "rating", nullable = true)
     private Integer rating;
 
     @Column(name = "number_of_review", nullable = true)
     private Integer numberOfReview;
 
-    @OneToMany(mappedBy = "product")
-    private List<Review> reviews = new ArrayList<>();
+    // @OneToMany(mappedBy = "product")
+    // private List<Review> reviews = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "brand")

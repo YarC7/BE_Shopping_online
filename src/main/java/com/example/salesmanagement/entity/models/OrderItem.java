@@ -1,17 +1,12 @@
 package com.example.salesmanagement.entity.models;
 
-import java.math.BigDecimal;
-import java.util.UUID;
-
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import com.example.salesmanagement.entity.utilities.Time;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 
@@ -20,24 +15,25 @@ import lombok.Data;
 @Entity
 @Table(name = "order_items")
 public class OrderItem {
+
     @Id
-    @Column(name = "order_item_id",length = 50, nullable = false, updatable = false)
-    private String orderItemId = "OI-" + UUID.randomUUID().toString();
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long orderItemId;
     
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "order_id", referencedColumnName = "order_id", nullable = false)
-    private Order order;    
+    @Column(name ="order_id")
+    private String orderId;    
     
-    @ManyToOne
-    @JoinColumn(name = "product_id", referencedColumnName = "product_id", nullable = false)
-    private Product product;
+    @Column
+    private String productId;
+
+    @Column
+    private String sku;
         
     @Column(name = "quantity", nullable = false)
     private int quantity;
 
     @Column(name = "total_price")
-    private BigDecimal totalPrice;
+    private Double totalPrice;
 
     @Column(length = 100, nullable = true)
     private String createdAt = Time.getDeadCurrentDate();
