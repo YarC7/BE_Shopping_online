@@ -10,4 +10,8 @@ import com.example.salesmanagement.entity.models.Product;
 public interface ProductRepository extends JpaRepository<Product , String> {
     @Query("SELECT p FROM Product p WHERE LOWER(p.productName) LIKE %:keyword% OR LOWER(p.productDescription) LIKE %:keyword%")
     List<Product> searchByKeyword(@Param("keyword") String keyword);
+
+
+    // @List<Product> searchByBrand(String )
+
 }

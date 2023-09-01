@@ -69,38 +69,4 @@ public class Order {
     @Column(length = 100, nullable = true)
     private String updatedAt = Time.getDeadCurrentDate();
 
-
-
-    // public List<OrderItem> addOrderedCartItems(Order order) {
-        
-    //     List<CartItem> orderedCartItems = cart.getOrderedCartItems();
-    //     for (CartItem cartItem : orderedCartItems) {
-    //         OrderItem orderItem = new OrderItem();
-    //         orderItem.setOrder(order);
-    //         orderItem.setProduct(cartItem.getProduct());
-    //         orderItem.setQuantity(cartItem.getQuantity());
-    //         orderItem.setTotalPrice(cartItem.getTotalPrice());
-    //         orderItems.add(orderItem);
-    //     }
-    //     return orderItems;
-    // }
-
-
-    // public BigDecimal getTotalAmount(Order order) {
-    //     List <OrderItem> orderedItems = order.getOrderItems();
-    //     BigDecimal totalAmount = BigDecimal.ZERO;
-    //     for (OrderItem item : orderedItems){
-    //         totalAmount = totalAmount.add(item.getTotalPrice());
-    //     }
-    //     return totalAmount;
-    // }
-
-    // public BigDecimal getGrandAmount(){
-    //     return grandAmount = (totalAmount.multiply(BigDecimal.valueOf(discount))).add(shippingFee);
-    // }
 }
-
-    
-        // @OneToOne(cascade = CascadeType.ALL)
-        // @JoinColumn(name = "payment_id")
-        // private Payment payment;

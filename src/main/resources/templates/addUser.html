@@ -1,0 +1,56 @@
+<!-- <!DOCTYPE htmi>
+<html lang="en" xmlns:th="http://www. thymeLeaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add User</title>
+    <link type="text/css" rel="stylesheet" href="bootstrap.min.css" th:href="@{bootstrap.min.css}"/>
+</head>
+
+<body>
+    <div class="OL -3"></div>
+    <div class="container col-6">
+    <hi>New User</h1>
+    <div class="col-md-auto">
+    <form th:object="${user}" th:action="@{save}" action="#" method="post">
+    <div>
+    <label th:text="Name" th:for="name"></label>
+    <input type="text" th:field="*{name}" class="form-controL” placeholder="Name"/>
+    <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}">E-mail error</span>
+    </div>
+    <div style="clear: both; display: block; height: 10px"></div>
+    <div>
+    <label th:text="Email” th:for
+
+        
+
+    “email"></label>
+
+    
+    
+
+    <input type="text” th:field="*{email}" class="form-control” placeholder="Email"/>
+    <span th:if="${#fields.hasErrors(‘email')}" th:errors="*{email}">E-mail error</span>
+
+    </div>
+
+    <div style="clear: both; display: block; height: 10px"></div>
+
+    <div>
+
+    <label th:text="Phone” th:for="phone"></label>
+    <input type="text" th:field="*{phone}” class="form-controL” placeholder="Phone"/>
+    <span th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}">E-mail error</span>
+
+    
+
+    
+
+    </div>
+    <div style="clear: both; display: block; height: 10px"></div>
+    <input type="submit” class="btn btn-success” value="Save"/>
+    </form>
+    </div>
+    </div>
+</body>
+
+</html> -->

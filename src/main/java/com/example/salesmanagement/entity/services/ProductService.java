@@ -12,6 +12,10 @@ import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -52,6 +56,16 @@ public class ProductService {
     private OverSpecsRepository overSpecsRepository;
 
 
+
+    public Page<Product> showList(Pageable pageable){
+        Page<Product> page = productRepository.findAll(
+            PageRequest.of(
+                   pageable.getPageNumber(),
+                   pageable.getPageSize(),
+                   pageable.getSortOr(Sort.by(Sort.Direction.DESC, "amount"))));
+        return page;
+           
+    }
 
     public void GetterSetter(Product exist , Product product){
         exist.setProductName(product.getProductName());

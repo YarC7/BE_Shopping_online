@@ -1,13 +1,18 @@
 package com.example.salesmanagement.entity.models;
 
+import java.util.Collection;
 import java.util.UUID;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import com.example.salesmanagement.entity.utilities.Time;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Entity
 @Data
@@ -49,4 +54,10 @@ public class Brand {
 
     @Column(length = 100, nullable = true)
     private String updatedAt = Time.getDeadCurrentDate();
+
+
+    @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL) 
+    @EqualsAndHashCode.Exclude 
+    @ToString.Exclude 
+    private Collection<Product> products;
 }

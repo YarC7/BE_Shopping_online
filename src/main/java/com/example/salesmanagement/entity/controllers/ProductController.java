@@ -21,6 +21,9 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.salesmanagement.entity.models.Product;
 import com.example.salesmanagement.entity.services.ProductService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @RestController
 @RequestMapping("/api/product")
@@ -41,6 +44,12 @@ public class ProductController {
         Product product = productService.getProductById(id);
         return ResponseEntity.ok(product);
     }
+
+    // @GetMapping
+    // public ResponseEntity<List<Product>> findAll(Pageable pageable) {
+    //     Page<Product> page = productService.showList(pageable);
+    // return ResponseEntity.ok(page.getContent());
+    // }
 
     @GetMapping("/search/{keyword}")
     public ResponseEntity<List<Product>> getProductByKeyWord(@PathVariable(value = "keyword") String keyword){

@@ -13,6 +13,7 @@ import com.example.salesmanagement.entity.utilities.Time;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.Data;
+import lombok.ToString;
 
 
 @Data
@@ -30,14 +31,15 @@ public class Review {
     @Column(name = "comment")
     private String comment;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "product", referencedColumnName = "product_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    @ToString.Exclude
     private Product product;
 
     @JsonIgnoreProperties({"tokens","createdAt","updatedAt","enabled","authorities","username","password","accountNonExpired","credentialsNonExpired","accountNonLocked","userPassword","userId", "userFirstName", "userLastName", "userPhone", "userAddress", "userNationality", "userGender", "userRole"})
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "seller")
-    private User seller;
+    @JoinColumn(name = "customer")
+    private User user;
 
     @Column(length = 100, nullable = true)
     private String createdAt = Time.getDeadCurrentDate();

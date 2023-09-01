@@ -191,7 +191,22 @@ public class OrderService {
             throw new EntityNotFoundException("Order not found with ID: " + orderId);
         }
     }
+
+    public String getOrderStatus(String id){
+        Optional<Order> one_Order = orderRepository.findById(id);
+        Order order = one_Order.get(); 
+        String status = order.getOrderStatus().getValue();
+        return status;
+    }
     
+
+    // public void updateOrder(String id,Order order){
+    //     Optional<Order> one_Order = orderRepository.findById(id);
+    //     Order currentOrder = one_Order.get(); 
+    //     List<OrderItem> items = currentOrder.getOrderItems();
+        
+
+    // }
     
 
 

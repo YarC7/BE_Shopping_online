@@ -2,6 +2,7 @@ package com.example.salesmanagement.entity.models;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import javax.persistence.CascadeType;
@@ -17,10 +18,14 @@ import javax.persistence.Transient;
 import com.example.salesmanagement.entity.utilities.Time;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Data
 @Entity
 @Table(name = "products")
+@ToString
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Product {  
 
     @Id
@@ -102,11 +107,13 @@ public class Product {
     @Column(name = "number_of_review", nullable = true)
     private Integer numberOfReview;
 
-    // @OneToMany(mappedBy = "product")
-    // private List<Review> reviews = new ArrayList<>();
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL) 
+    @ToString.Exclude 
+    private Collection<Review> reviews = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "brand")
+    @ManyToOne
+    @JoinColumn(name = "brand_id")
+    @ToString.Exclude
     private Brand brand;
 
     @JsonIgnoreProperties({"tokens","createdAt","updatedAt","enabled","authorities","username","password","accountNonExpired","credentialsNonExpired","accountNonLocked","userPassword","userId", "userFirstName", "userLastName", "userPhone", "userAddress", "userNationality", "userGender", "userRole"})
@@ -125,18 +132,4 @@ public class Product {
     @Column(length = 100, nullable = true)
     private String updatedAt = Time.getDeadCurrentDate();
 
-    public void setCategory(Category category) {
-        // Remove the product from the current category (if any)
-        if (this.category != null) {
-            this.category.getProduct().remove(this);
-        }
-    
-        // Set the new category for the product
-        this.category = category;
-    
-        // Add the product to the new category
-        if (category != null) {
-            category.getProduct().add(this);
-        }
-    }
 }
