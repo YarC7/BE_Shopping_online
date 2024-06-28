@@ -56,6 +56,12 @@ public class ProductService {
     private OverSpecsRepository overSpecsRepository;
 
 
+    public List<Product> filter(String keyword){
+        List<Product> products = productRepository.searchByKeyword(keyword);
+        return products;
+    }
+
+
 
     public Page<Product> showList(Pageable pageable){
         Page<Product> page = productRepository.findAll(
@@ -66,6 +72,8 @@ public class ProductService {
         return page;
            
     }
+
+    
 
     public void GetterSetter(Product exist , Product product){
         exist.setProductName(product.getProductName());
@@ -84,7 +92,7 @@ public class ProductService {
         exist.setIsOnSale(product.getIsOnSale());
         exist.setIsOutOfStock(product.getIsOutOfStock());
         // exist.setRating(null);
-        exist.setNumberOfReview(null);
+        // exist.setNumberOfReview(null);
         exist.setYearOfProduction(product.getYearOfProduction());
         exist.setProductOrigin(product.getProductOrigin());  
 
@@ -139,7 +147,7 @@ public class ProductService {
         }
         Product existingProduct = one_Product.get();
 
-        List<Variant> Variant = existingProduct.getVariant();
+        List<Variant> Variant = existingProduct.getVariants();
         List<Variant> matchingVariants = new ArrayList<>();
         for (Variant optional : Variant){
             String skuHere = optional.getSku();
@@ -152,9 +160,9 @@ public class ProductService {
         Product temporaryProduct = new Product();
         temporaryProduct.setProductId(existingProduct.getProductId());
         GetterSetter(temporaryProduct,existingProduct);
-        temporaryProduct.setVariant(matchingVariants);
-        temporaryProduct.getOverDetailSpecs().addAll(existingProduct.getOverDetailSpecs());
-        temporaryProduct.getOverSpecs().addAll(existingProduct.getOverSpecs());
+        temporaryProduct.setVariants(matchingVariants);
+        // temporaryProduct.getOverDetailSpecs().addAll(existingProduct.getOverDetailSpecs());
+        // temporaryProduct.getOverSpecs().addAll(existingProduct.getOverSpecs());
 
         // You can set other fields of the temporary product here
         
@@ -168,34 +176,34 @@ public class ProductService {
             throw new EntityNotFoundException("Product not found with ID: " + productId);
         }
         Product existingProduct = one_Product.get();
-        int index = existingProduct.getVariant().size() + 1;
-        existingProduct.getVariant().add(index, variants);
+        int index = existingProduct.getVariants().size() + 1;
+        existingProduct.getVariants().add(index, variants);
 
         return existingProduct;
     }
 
-    public Product addOverSpecs( String productId,OverSpecs overSpecs){
-        Optional<Product> one_Product = productRepository.findById(productId);
-        if (one_Product.isEmpty()) {
-            throw new EntityNotFoundException("Product not found with ID: " + productId);
-        }
-        Product existingProduct = one_Product.get();
-        int index = existingProduct.getOverSpecs().size() + 1;
-        existingProduct.getOverSpecs().add(index, overSpecs);
+    // public Product addOverSpecs( String productId,OverSpecs overSpecs){
+    //     Optional<Product> one_Product = productRepository.findById(productId);
+    //     if (one_Product.isEmpty()) {
+    //         throw new EntityNotFoundException("Product not found with ID: " + productId);
+    //     }
+    //     Product existingProduct = one_Product.get();
+    //     int index = existingProduct.getOverSpecs().size() + 1;
+    //     existingProduct.getOverSpecs().add(index, overSpecs);
 
-        return existingProduct;
-    }
-    public Product addOverDetailSpecs( String productId,OverDetailSpecs overDetailSpecs){
-        Optional<Product> one_Product = productRepository.findById(productId);
-        if (one_Product.isEmpty()) {
-            throw new EntityNotFoundException("Product not found with ID: " + productId);
-        }
-        Product existingProduct = one_Product.get();
-        int index = existingProduct.getOverDetailSpecs().size() + 1;
-        existingProduct.getOverDetailSpecs().add(index, overDetailSpecs);
+    //     return existingProduct;
+    // }
+    // public Product addOverDetailSpecs( String productId,OverDetailSpecs overDetailSpecs){
+    //     Optional<Product> one_Product = productRepository.findById(productId);
+    //     if (one_Product.isEmpty()) {
+    //         throw new EntityNotFoundException("Product not found with ID: " + productId);
+    //     }
+    //     Product existingProduct = one_Product.get();
+    //     int index = existingProduct.getOverDetailSpecs().size() + 1;
+    //     existingProduct.getOverDetailSpecs().add(index, overDetailSpecs);
 
-        return existingProduct;
-    }
+    //     return existingProduct;
+    // }
 
 
     public Product createProduct(Authentication authentication,String categoryId, Product product) {
@@ -211,9 +219,9 @@ public class ProductService {
 
             product.setCategory(category); 
 
-            variantRepository.saveAll(product.getVariant());
-            overSpecsRepository.saveAll(product.getOverSpecs());
-            overDetailSpecsRepository.saveAll(product.getOverDetailSpecs());
+            variantRepository.saveAll(product.getVariants());
+            // overSpecsRepository.saveAll(product.getOverSpecs());
+            // overDetailSpecsRepository.saveAll(product.getOverDetailSpecs());
             
             Product createProduct = productRepository.save(product);
 
@@ -238,14 +246,14 @@ public class ProductService {
         existingProduct.setProductDescription(product.getProductDescription());
         existingProduct.setProductTag(product.getProductTag());
 
-        existingProduct.getVariant().clear();
-        existingProduct.getVariant().addAll(product.getVariant());
+        existingProduct.getVariants().clear();
+        existingProduct.getVariants().addAll(product.getVariants());
 
-        existingProduct.getOverSpecs().clear();
-        existingProduct.getOverSpecs().addAll(product.getOverSpecs());
+        // existingProduct.getOverSpecs().clear();
+        // existingProduct.getOverSpecs().addAll(product.getOverSpecs());
 
-        existingProduct.getOverDetailSpecs().clear();
-        existingProduct.getOverDetailSpecs().addAll(product.getOverDetailSpecs());
+        // existingProduct.getOverDetailSpecs().clear();
+        // existingProduct.getOverDetailSpecs().addAll(product.getOverDetailSpecs());
 
         // existingProduct.setNumberOfView();
         existingProduct.setProductWarrantyPeriod(product.getProductWarrantyPeriod());
@@ -258,7 +266,7 @@ public class ProductService {
         existingProduct.setIsOnSale(product.getIsOnSale());
         existingProduct.setIsOutOfStock(product.getIsOutOfStock());
         // existingProduct.setRating(null);
-        existingProduct.setNumberOfReview(null);
+        // existingProduct.setNumberOfReview((Integer) null);
         existingProduct.setYearOfProduction(product.getYearOfProduction());
         existingProduct.setProductOrigin(product.getProductOrigin());
         existingProduct.setUpdatedAt(Time.getCurrentDate());

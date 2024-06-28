@@ -11,7 +11,7 @@ public interface ProductRepository extends JpaRepository<Product , String> {
     @Query("SELECT p FROM Product p WHERE LOWER(p.productName) LIKE %:keyword% OR LOWER(p.productDescription) LIKE %:keyword%")
     List<Product> searchByKeyword(@Param("keyword") String keyword);
 
-
-    // @List<Product> searchByBrand(String )
-
+    // @Query("SELECT p From Product p where lower(p.brand.brandId Like %:brand_id)")
+    // List<Product> searchByBrandId(@Param("keyword") String brand_id);
 }
+

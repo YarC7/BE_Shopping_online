@@ -25,7 +25,6 @@ public class OverDetailSpecs{
     private String groupKey;
     
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-     
     private List<OverSpecs> groupItems;
 
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,7 @@ import com.example.salesmanagement.entity.services.CategoryService;
 
 @RestController
 @RequestMapping("/api/categories")
+@CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
 public class CategoryController {
 
     @Autowired
@@ -58,12 +60,12 @@ public class CategoryController {
         System.out.println(category);
     }
 
-    @PutMapping("/{id}/change")
-    @PreAuthorize("hasAuthority('seller:update')")
-    public void changeCategory(@PathVariable("id") String id, @RequestBody Category category) {
-        categoryService.changeCategory(id, category);
-        System.out.println(category);
-    }
+    // @PutMapping("/{id}/change")
+    // @PreAuthorize("hasAuthority('seller:update')")
+    // public void changeCategory(@PathVariable("id") String id, @RequestBody Category category) {
+    //     categoryService.changeCategory(id, category);
+    //     System.out.println(category);
+    // }
 
     @DeleteMapping("/{id}/delete")
     @PreAuthorize("hasAuthority('seller:delete')")

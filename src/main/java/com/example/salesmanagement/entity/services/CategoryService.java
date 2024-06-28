@@ -32,8 +32,22 @@ public class CategoryService {
     }
 
     public void createCategory(Category category) {
-        setIndexAuto(category,getIndexCate());
-        categoryRepository.save(category);
+        
+        
+        Category parentCategory = category.getParentCategory();
+        if (parentCategory != null){
+            String id = parentCategory.getCategoryId();
+            Optional<Category> one_Category = categoryRepository.findById(id);
+            Category parent = one_Category.get();
+            category.setParentCategory(parent);
+            setIndexAuto(category,getIndexCate());
+            categoryRepository.save(category);
+        }
+        else{
+            setIndexAuto(category,getIndexCate());
+            categoryRepository.save(category);
+        }
+        
     }
 
     
@@ -52,15 +66,20 @@ public class CategoryService {
         return categoryRepository.findAllWithProducts();
     }
 
-    public void changeCategory(String id,Category category){
-        Optional<Category> optionalCategory = categoryRepository.findById(id);
-        Category existingCategory = optionalCategory.get(); 
+    // public void changeCategory(String id,Category category){
+    //     Optional<Category> optionalCategory = categoryRepository.findById(id);
+    //     Category existingCategory = optionalCategory.get(); 
 
-        Category parentCategory = category.getParentCategory();
-        existingCategory.setParentCategory(parentCategory);
-        setIndexAuto(existingCategory,getIndexCate());
-        categoryRepository.save(existingCategory);
-    }
+    //     Category parentCategory = category.getParentCategory();
+    //     existingCategory.setParentCategory(parentCategory);
+    //     setIndexAuto(existingCategory,getIndexCate());
+    //     categoryRepository.save(existingCategory);
+
+
+
+    //     // existingCategory.setParentCategory()
+
+    // }
 
     public ResponseEntity<Category> updateCategory(String id, Category category) {
         Optional<Category> optionalCategory = categoryRepository.findById(id);
@@ -69,12 +88,20 @@ public class CategoryService {
         }
         Category existingCategory = optionalCategory.get();   
         // //update parent cate
-        changeCategory(id,category);
+        // changeCategory(id,category);
+        String parentId = category.getParentCategory().getCategoryId();
+        Optional<Category> optionalParent = categoryRepository.findById(parentId);
+        if (!optionalCategory.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        existingCategory.setParentCategory(optionalParent.get());
         //update content cate
         existingCategory.setCategoryName(category.getCategoryName());
         existingCategory.setSlug(category.getSlug());
         existingCategory.setDescription(category.getDescription());
         existingCategory.setUpdatedAt(Time.getCurrentDate());
+        setIndexAuto(existingCategory,getIndexCate());
         Category updatedCategory = categoryRepository.save(existingCategory);
         return ResponseEntity.ok(updatedCategory);
     }

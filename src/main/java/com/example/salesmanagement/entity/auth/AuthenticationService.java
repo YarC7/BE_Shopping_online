@@ -40,11 +40,11 @@ public class AuthenticationService {
     //allowed to register just for customer
     public AuthenticationResponse register(RegisterRequest request) {
         var user = User.builder()
-            .userEmail(request.getUserEmail()) 
-            .userName(request.getUserName())
+            .userEmail(request.getEmail()) 
+            .userName(request.getUsername())
             .userFirstName(request.getUserFirstName())
             .userLastName(request.getUserLastName())
-            .userPassword(passwordEncoder.encode(request.getUserPassword()))
+            .userPassword(passwordEncoder.encode(request.getPassword()))
             .userPhone(request.getUserPhone())
             .userNationality(request.getUserNationality())
             .userGender(request.getUserGender())
@@ -54,12 +54,12 @@ public class AuthenticationService {
             var jwtToken = jwtService.generateToken(user);
             var refreshToken = jwtService.generateRefreshToken(user);
 
-            // String link = "http://localhost:1707/api/auth/confirm?token=" + jwtToken;
+            String link = "http://localhost:1707/api/auth/confirm?token=" + jwtToken;
 
-            // emailSender.send(request.getUserEmail(),buildEmail(request.getUserFirstName(),link));
+            emailSender.send(request.getEmail(),buildEmail(request.getUserFirstName(),link));
             saveUserToken(savedUser, jwtToken);
             return AuthenticationResponse.builder()
-                // .url(link)
+                .url(link)
                 .accessToken(jwtToken)
                     .refreshToken(refreshToken)
                 .build();
@@ -85,11 +85,11 @@ public class AuthenticationService {
 
     public AuthenticationResponse registers(RegisterRequest request) {
         var user = User.builder()
-            .userEmail(request.getUserEmail()) 
-            .userName(request.getUserName())
+            .userEmail(request.getEmail()) 
+            .userName(request.getUsername())
             .userFirstName(request.getUserFirstName())
             .userLastName(request.getUserLastName())
-            .userPassword(passwordEncoder.encode(request.getUserPassword()))
+            .userPassword(passwordEncoder.encode(request.getPassword()))
             .userPhone(request.getUserPhone())
             .userNationality(request.getUserNationality())
             .userGender(request.getUserGender())
@@ -110,11 +110,11 @@ public class AuthenticationService {
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
-                request.getUserEmail(), 
-                request.getUserPassword() 
+                request.getUsername(), 
+                request.getPassword() 
             )
         );
-        var user = userRepository.findByUserEmail(request.getUserEmail())
+        var user = userRepository.findByUserEmail(request.getUsername())
             .orElseThrow();
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);

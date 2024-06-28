@@ -13,15 +13,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RegisterRequest {
 
-    private String userEmail;
+    private String email;
 
-    private String userName;
+    private String username;
 
     private String userFirstName;
 
     private String userLastName;
 
-    private String userPassword;
+    private String password;
 
     private String userPhone;
 

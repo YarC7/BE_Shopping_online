@@ -50,10 +50,6 @@ public class CartService {
     //     return null; // Or throw an exception if category is not found
     // }
 
-
-
-    
-
     // public ResponseEntity<Cart> updateCart(String id, Cart cart) {
     //     Optional<Cart> optionalCart = cartRepository.findById(id);
     //     if (!optionalCart.isPresent()) {

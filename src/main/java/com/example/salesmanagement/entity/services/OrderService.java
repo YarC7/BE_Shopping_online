@@ -51,12 +51,12 @@ public class OrderService {
         }
         Product newProduct = new Product();
         newProduct = one_Product.get();
-        List<Variant> Variant = newProduct.getVariant();
+        List<Variant> Variant = newProduct.getVariants();
         for (Variant optional : Variant){
             if (optional.getSku() == sku){
             
             }
-            newProduct.getVariant().add(0, optional);
+            newProduct.getVariants().add(0, optional);
         }     
         return newProduct;
 

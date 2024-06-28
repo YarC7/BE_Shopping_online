@@ -50,20 +50,17 @@ public class Product {
     @Column
     private String productTag;
 
-     
-    @OneToMany(cascade = CascadeType.ALL,fetch=FetchType.LAZY, orphanRemoval = true)
-    private List<OverSpecs> overSpecs = new ArrayList<OverSpecs>();
+    // @OneToMany(cascade = CascadeType.ALL,fetch=FetchType.LAZY, orphanRemoval = true)
+    // private List<OverSpecs> overSpecs = new ArrayList<OverSpecs>();
 
-     
-    @OneToMany(cascade = CascadeType.ALL,fetch=FetchType.LAZY, orphanRemoval = true)
-    private List<OverDetailSpecs> overDetailSpecs = new ArrayList<OverDetailSpecs>();
-
+    // @OneToMany(cascade = CascadeType.ALL,fetch=FetchType.LAZY, orphanRemoval = true)
+    // private List<OverDetailSpecs> overDetailSpecs = new ArrayList<OverDetailSpecs>();
      
     @OneToMany(cascade = CascadeType.DETACH,fetch=FetchType.LAZY, orphanRemoval = true)
-    private List<Variant>  Variant = new ArrayList<Variant>();
+    private List<Variant>  Variants = new ArrayList<Variant>();
 
     @Column(nullable = true)
-    private Integer numberOfView;
+    private int numberOfView;
 
     @Column
     private String productWarrantyPeriod;
@@ -102,16 +99,17 @@ public class Product {
     private int inStock;
 
     @Column(name = "rating", nullable = true)
-    private Integer rating;
+    private int rating;
 
     @Column(name = "number_of_review", nullable = true)
-    private Integer numberOfReview;
+    private int numberOfReview;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL) 
     @ToString.Exclude 
     private Collection<Review> reviews = new ArrayList<>();
 
     @ManyToOne
+    @JsonIgnoreProperties({"products"})
     @JoinColumn(name = "brand_id")
     @ToString.Exclude
     private Brand brand;

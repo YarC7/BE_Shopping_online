@@ -3,10 +3,8 @@ package com.example.salesmanagement.entity.services;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -22,6 +20,7 @@ import com.example.salesmanagement.entity.repositories.CartRepository;
 import com.example.salesmanagement.entity.repositories.ProductRepository;
 import com.example.salesmanagement.entity.repositories.UserRepository;
 import com.example.salesmanagement.entity.utilities.Time;
+import com.example.salesmanagement.entity.exceptions.ProductNotFoundException;
 
 @Service
 public class CartItemService {
@@ -46,12 +45,12 @@ public class CartItemService {
         }
         Product newProduct = new Product();
         newProduct = one_Product.get();
-        List<Variant> Variant = newProduct.getVariant();
+        List<Variant> Variant = newProduct.getVariants();
         for (Variant optional : Variant){
             if (optional.getSku() == sku){
             
             }
-            newProduct.getVariant().add(0, optional);
+            newProduct.getVariants().add(0, optional);
         }     
         return newProduct;
 

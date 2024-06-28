@@ -3,6 +3,8 @@ package com.example.salesmanagement.entity.models;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -24,8 +26,8 @@ public class Category {
     @Column(name = "category_id", length = 50, nullable = false, updatable = false)
     private String categoryId = "CT-" + UUID.randomUUID().toString();
 
-    @JsonIgnoreProperties({"subcategories","product","createdAt","updatedAt"})
-    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"subcategories","parentCategory","product","index","slug","description","countProduct","createdAt","updatedAt"})
+    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.PERSIST)
     @JoinColumn(name = "parent_category" , nullable = true)
     private Category parentCategory;
     
@@ -44,11 +46,11 @@ public class Category {
     @Column(length = 255,name = "description", nullable = true)
     private String description;
 
-    @Column(name = "is_hide")
-    private boolean isHide = true;
+    // @Column(name = "is_hide")
+    // private boolean isHide = true;
 
-    @Column(name = "count_product")
-    private Integer countProduct;
+    @Column(name = "count_product" )
+    private int countProduct;
     
     @OneToMany(mappedBy = "category")
     private List<Product> product; 

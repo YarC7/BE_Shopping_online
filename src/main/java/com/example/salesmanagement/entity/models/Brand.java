@@ -10,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import com.example.salesmanagement.entity.utilities.Time;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -59,5 +61,6 @@ public class Brand {
     @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL) 
     @EqualsAndHashCode.Exclude 
     @ToString.Exclude 
+    @JsonIgnoreProperties({"brand","products"})
     private Collection<Product> products;
 }
