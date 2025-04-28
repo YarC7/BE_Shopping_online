@@ -21,15 +21,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import com.example.salesmanagement.entity.repositories.CategoryRepository;
-import com.example.salesmanagement.entity.repositories.OverDetailSpecsRepository;
-import com.example.salesmanagement.entity.repositories.OverSpecsRepository;
+// import com.example.salesmanagement.entity.repositories.OverDetailSpecsRepository;
+// import com.example.salesmanagement.entity.repositories.OverSpecsRepository;
 import com.example.salesmanagement.entity.repositories.ProductRepository;
 import com.example.salesmanagement.entity.repositories.UserRepository;
 import com.example.salesmanagement.entity.repositories.VariantRepository;
 import com.example.salesmanagement.entity.utilities.Time;
 import com.example.salesmanagement.entity.models.Category;
-import com.example.salesmanagement.entity.models.OverDetailSpecs;
-import com.example.salesmanagement.entity.models.OverSpecs;
+// import com.example.salesmanagement.entity.models.OverDetailSpecs;
+// import com.example.salesmanagement.entity.models.OverSpecs;
 import com.example.salesmanagement.entity.models.Product;
 import com.example.salesmanagement.entity.models.Variant;
 import com.example.salesmanagement.entity.models.User;
@@ -49,11 +49,11 @@ public class ProductService {
     @Autowired
     private CategoryRepository categoryRepository;
     
-    @Autowired
-    private OverDetailSpecsRepository overDetailSpecsRepository;
+    // @Autowired
+    // private OverDetailSpecsRepository overDetailSpecsRepository;
 
-    @Autowired
-    private OverSpecsRepository overSpecsRepository;
+    // @Autowired
+    // private OverSpecsRepository overSpecsRepository;
 
 
     public List<Product> filter(String keyword){
